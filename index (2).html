@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Clock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-12: 3rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --color-bg: #e8f4ff;
+      --color-surface: #f7fbff;
+      --color-border: #bfd8f2;
+      --color-text: #17324d;
+      --color-text-muted: #4f6b85;
+      --color-primary: #1976d2;
+      --color-primary-hover: #115293;
+      --color-divider: #d6e5f2;
+      --shadow-lg: 0 12px 32px rgba(25, 118, 210, 0.12);
+      --font-display: 'Orbitron', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #07141f;
+      --color-surface: #0d1f2e;
+      --color-border: #1f4059;
+      --color-text: #dcecff;
+      --color-text-muted: #9cb7cf;
+      --color-primary: #4f9fff;
+      --color-primary-hover: #2e86ff;
+      --color-divider: #183247;
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: var(--space-6);
+      background:
+        radial-gradient(circle at top left, rgba(79, 159, 255, 0.20), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(25, 118, 210, 0.16), transparent 30%),
+        var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+    }
+    .app {
+      width: min(100%, 760px);
+      background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .logo {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 9999px;
+      display: grid;
+      place-items: center;
+      color: var(--color-primary);
+      border: 1px solid color-mix(in srgb, var(--color-primary) 50%, transparent);
+    }
+    .toggle {
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 9999px;
+      border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+      color: var(--color-text);
+      background: transparent;
+      cursor: pointer;
+    }
+    .content {
+      padding: clamp(var(--space-8), 6vw, var(--space-12));
+      display: grid;
+      gap: var(--space-8);
+    }
+    .headline {
+      display: grid;
+      gap: var(--space-2);
+      text-align: center;
+    }
+    .headline h1 {
+      font-size: var(--text-xl);
+      font-weight: 700;
+    }
+    .headline p {
+      color: var(--color-text-muted);
+      font-size: var(--text-base);
+      max-width: 48ch;
+      margin: 0 auto;
+    }
+    .clock-card {
+      display: grid;
+      gap: var(--space-4);
+      justify-items: center;
+      padding: clamp(var(--space-6), 5vw, var(--space-12));
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 92%, transparent), color-mix(in srgb, var(--color-surface) 72%, transparent));
+      border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+    .time {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 9vw, 5.8rem);
+      line-height: 1;
+      letter-spacing: 0.08em;
+      text-align: center;
+      color: var(--color-text);
+    }
+    .date-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-3);
+      color: var(--color-text-muted);
+      font-size: var(--text-base);
+    }
+    .pill {
+      padding: 0.55rem 0.9rem;
+      border-radius: 9999px;
+      border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+      background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+    }
+    .footer-note {
+      text-align: center;
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+    @media (max-width: 560px) {
+      .topbar { padding: var(--space-4); }
+      .content { padding: var(--space-6); }
+      .time { letter-spacing: 0.04em; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"></circle>
+            <path d="M12 7v5l3 2"></path>
+          </svg>
+        </div>
+        Clock Demo
+      </div>
+      <button class="toggle" type="button" data-theme-toggle aria-label="Switch theme">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <section class="content">
+      <div class="headline">
+        <h1>Digital Clock </h1>
+        <p>A simple static web app you can serve with Nginx, package with Docker, and later deploy on Kubernetes.</p>
+      </div>
+
+      <section class="clock-card" aria-label="Digital clock display">
+        <div class="time" id="time">00:00:00</div>
+        <div class="date-row">
+          <span class="pill" id="day">Day</span>
+          <span class="pill" id="date">Date</span>
+          <span class="pill" id="ampm">AM</span>
+        </div>
+      </section>
+
+      <p class="footer-note">Use this as your first GitHub + Docker + Nginx deployment project.</p>
+    </section>
+  </main>
+
+  <script>
+    const timeEl = document.getElementById('time');
+    const dayEl = document.getElementById('day');
+    const dateEl = document.getElementById('date');
+    const ampmEl = document.getElementById('ampm');
+    const toggle = document.querySelector('[data-theme-toggle]');
+    const root = document.documentElement;
+    let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    root.setAttribute('data-theme', theme);
+
+    function updateToggleIcon() {
+      toggle.innerHTML = theme === 'dark'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+    }
+    updateToggleIcon();
+
+    toggle.addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', theme);
+      updateToggleIcon();
+    });
+
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      const hoursDisplay = String(hours).padStart(2, '0');
+
+      const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
+      const dateText = now.toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+
+      timeEl.textContent = `${hoursDisplay}:${minutes}:${seconds}`;
+      dayEl.textContent = dayName;
+      dateEl.textContent = dateText;
+      ampmEl.textContent = ampm;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
